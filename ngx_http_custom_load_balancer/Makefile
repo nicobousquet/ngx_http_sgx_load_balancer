@@ -30,6 +30,7 @@
 #
 
 ######## SGX SDK Settings ########
+NGINX_DIR ?= ../nginx-1.22.0
 
 SGX_SDK ?= /opt/intel/sgxsdk
 SGX_MODE ?= HW
@@ -96,7 +97,7 @@ endif
 
 App_Cpp_Flags := $(App_C_Flags)
 App_Link_Flags := -L$(SGX_LIBRARY_PATH) -l$(Urts_Library_Name) -lpthread
-App_Link_NGX := -I ../src/core -I ../src/http -I ../src/http/modules -I ../objs -I ../src/os/unix -I ../src/event
+App_Link_NGX := -I ${NGINX_DIR}/src/core -I ${NGINX_DIR}/src/http -I ${NGINX_DIR}/src/http/modules -I ${NGINX_DIR}/objs -I ${NGINX_DIR}/src/os/unix -I ${NGINX_DIR}/src/event
 
 App_Cpp_Objects := $(App_Cpp_Files:.cpp=.o)
 

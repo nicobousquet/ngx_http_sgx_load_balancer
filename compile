@@ -1,0 +1,8 @@
+NGINX_DIR="nginx-1.22.0"
+cd ngx_http_custom_load_balancer
+make
+cd ../$NGINX_DIR
+make
+make install
+
+cp ngx_http_custom_load_balancer/enclave.signed.so .
