@@ -1,3 +1,5 @@
+#!/bin/bash
+
 NGINX_DIR="nginx-1.22.0"
 cd ngx_http_custom_load_balancer
 make

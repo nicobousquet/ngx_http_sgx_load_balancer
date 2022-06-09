@@ -1,3 +1,5 @@
+#!/bin/bash
+
 NGINX_DIR="nginx-1.22.0"
 SGX_SDK="/opt/intel/sgxsdk"
 DIR="../ngx_http_custom_load_balancer"

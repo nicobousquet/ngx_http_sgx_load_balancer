@@ -1,3 +1,5 @@
+#!/bin/bash
+
 NGINX_DIR="nginx-1.22.0"
 wget https://nginx.org/download/$NGINX_DIR.tar.gz
 tar -xzf $NGINX_DIR.tar.gz
