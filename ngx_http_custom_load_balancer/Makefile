@@ -176,7 +176,7 @@ all: .config_$(Build_Mode)_$(SGX_ARCH)
 	@$(MAKE) target
 
 ifeq ($(Build_Mode), HW_RELEASE)
-target:  $(App_Name) $(Enclave_Name)
+target: $(Enclave_Name)
 	@echo "The project has been built in release hardware mode."
 	@echo "Please sign the $(Enclave_Name) first with your signing key before you run the $(App_Name) to launch and access the enclave."
 	@echo "To sign the enclave use the command:"
@@ -186,7 +186,7 @@ target:  $(App_Name) $(Enclave_Name)
 
 
 else
-target: $(App_Name) $(Signed_Enclave_Name)
+target: $(Signed_Enclave_Name)
 ifeq ($(Build_Mode), HW_DEBUG)
 	@echo "The project has been built in debug hardware mode."
 else ifeq ($(Build_Mode), SIM_DEBUG)
@@ -226,10 +226,6 @@ App/Enclave_u.o: App/Enclave_u.c
 App/%.o: App/%.cpp  App/Enclave_u.h
 	@$(CXX) $(SGX_COMMON_CXXFLAGS) $(App_Cpp_Flags) $(App_Link_NGX) -c $< -o $@
 	@echo "CXX  <=  $<"
-
-$(App_Name): App/Enclave_u.o $(App_Cpp_Objects)
-	@$(CXX) -c $^ -o $@ $(App_Link_Flags)
-	@echo "LINK =>  $@"
 
 ######## Enclave Objects ########
 
