@@ -48,7 +48,7 @@ sgx_enclave_id_t global_eid = 0;
 
 int initialize_enclave(void)
 {
-    sgx_status_t ret = SGX_ERROR_UNEXPECTED;    
+    sgx_status_t ret = SGX_ERROR_UNEXPECTED;
     ret = sgx_create_enclave(ENCLAVE_FILENAME, SGX_DEBUG_FLAG, NULL, NULL, &global_eid, NULL);
     if (ret != SGX_SUCCESS) {
         printf("sgx error %i\n", ret);
@@ -105,7 +105,7 @@ typedef struct {
 
 
 //context
-static ngx_http_module_t  ngx_http_custom_load_balancer_module_ctx = { 
+static ngx_http_module_t  ngx_http_custom_load_balancer_module_ctx = {
     NULL,                                  /* preconfiguration */
     NULL,                                  /* postconfiguration */
 
@@ -122,7 +122,7 @@ static ngx_http_module_t  ngx_http_custom_load_balancer_module_ctx = {
 
 // Directive declaration
 // https://www.nginx.com/resources/wiki/extending/api/configuration/
-static ngx_command_t  ngx_http_custom_load_balancer_commands[] = { 
+static ngx_command_t  ngx_http_custom_load_balancer_commands[] = {
     { ngx_string("truc"),
       NGX_HTTP_UPS_CONF|NGX_CONF_NOARGS,
       ngx_http_upstream_custom_registration, // registration function
@@ -160,17 +160,45 @@ char * ngx_http_upstream_custom_registration(ngx_conf_t *cf, ngx_command_t *cmd,
 
 
     /////////////////////////////////////
-    if(initialize_enclave() < 0){
-        printf("Failed initializing enclave\n");
-    }
-    
-    int a;
-    ecall_printf(global_eid, &a);
-    printf("a=%i\n",a);
+       // client_lib.so pour double attestation
 
-    /* Destroy the enclave */
-    sgx_destroy_enclave(global_eid);
-    ////////////////////////////////////
+
+       void *handle;
+       int (*attest_enclave)(uint64_t);
+       char *error;
+       handle = dlopen ("./client_lib.so", RTLD_LAZY);
+       if (!handle) {
+           fprintf (stderr, "%s\n", dlerror());
+           exit(1);
+       }
+       dlerror();
+       attest_enclave = (int (*)(uint64_t)) dlsym(handle, "_Z14attest_enclavem");
+
+       if ((error = dlerror()) != NULL)  {
+           fprintf (stderr, "%s\n", error);
+           exit(1);
+       }
+
+
+       /////////////////////////////////////
+       if(initialize_enclave() < 0){
+           printf("Failed initializing enclave\n");
+       }
+
+       int a;
+       ecall_printf(global_eid, &a);
+       printf("a=%i\n",a);
+
+
+
+       (*attest_enclave)(global_eid);
+       dlclose(handle);
+
+
+
+       /* Destroy the enclave */
+       sgx_destroy_enclave(global_eid);
+       ////////////////////////////////////
 
 
 
@@ -239,15 +267,15 @@ ngx_int_t ngx_http_upstream_custom_init(ngx_conf_t *cf, ngx_http_upstream_srv_co
             }
             uint16_t port;
             port = htons (endpoint->sin6_port);
-            
-            
+
+
             printf("    ↳ Peer n°%i:\n",(int) n);
             printf("        ↳ ip: %s\n",ip);
             printf("        ↳ port: %i\n",port);
             printf("        ↳ name: %s\n",server[i].addrs[j].name.data);
         }
     }
-    
+
     us->peer.data = peers;
 
     return NGX_OK;
@@ -283,7 +311,7 @@ static ngx_int_t ngx_http_upstream_get_custom_load_balancer_peer(ngx_peer_connec
     pc->sockaddr = peer->sockaddr;
     pc->socklen  = peer->socklen;
     pc->name     = peer->name;
-    
+
     return NGX_OK;
 }
 

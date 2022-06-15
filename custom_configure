@@ -5,6 +5,6 @@ SGX_SDK="/opt/intel/sgxsdk"
 DIR="../ngx_http_custom_load_balancer"
 FLAG="-I $SGX_SDK/lib64 -I $SGX_SDK/include -I $DIR/Include -I $DIR/App -I $DIR/Enclave -lsgx_urts -lpthread"
 FLAG2="-lsgx_urts -lpthread"
-PREFIX="build"
+PREFIX="/home/fullfox/Bureau/nginx-SGX-load-balancer/nginx-1.22.0/build"
 cd $NGINX_DIR
 ./configure --prefix=$PREFIX --add-module=$DIR --with-cc-opt="$FLAG" --with-ld-opt="$FLAG2"

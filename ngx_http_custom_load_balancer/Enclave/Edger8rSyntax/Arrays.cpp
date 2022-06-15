@@ -32,6 +32,7 @@
 /* Test Array Attributes */
 
 #include "sgx_trts.h"
+#include "user_types.h"
 #include "../Enclave.h"
 #include "Enclave_t.h"
 

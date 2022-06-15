@@ -1,3 +1,5 @@
+.vscode
+client.log
 *.o
 *.so
 .config_HW_DEBUG_x64
