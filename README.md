@@ -24,3 +24,10 @@ Finally, nginx is ready to be run through ``./nginx``
 
 ## Requirements
 Intel SGX SDK should be installed in ``/opt/intel/sgxsdk``.
+
+
+## Todo
+
+- Clean les makefiles, bouger sgx-ra-sample avec le reste en degageant les trucs useless
+- Handler module + signer ac les clefs pub provisionnées
+- Serveur qui verif les signatures en face
