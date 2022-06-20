@@ -51,6 +51,7 @@ enclave {
 #endif
 		public int ecall_printf();
 
+		public int ecall_decrypt([in, string] char * cipherdata, [out, size=128] char * cleardata);
 
 		public sgx_status_t get_report([out] sgx_report_t *report,
 			[in] sgx_target_info_t *target_info);

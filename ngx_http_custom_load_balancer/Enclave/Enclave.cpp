@@ -27,7 +27,6 @@ in the License.
 #include <sgx_tkey_exchange.h>
 #include <sgx_tcrypto.h>
 
-
 #include <assert.h>
 #include <cstdio>
 #include <stdlib.h>
@@ -35,6 +34,8 @@ in the License.
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+sgx_ra_key_128_t session_key;
 
 int printf(const char* fmt, ...);
 
@@ -60,6 +61,13 @@ int ecall_printf(void){
 }
 
 
+int ecall_decrypt(char * encrypted_data, char * decrypted_data){
+
+	uint8_t nonce[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	sgx_aes_ctr_decrypt(&session_key, (const uint8_t *) encrypted_data, 128, nonce, 128, (uint8_t *) decrypted_data);
+
+	return 0;
+}
 
 
 
@@ -219,9 +227,9 @@ sgx_status_t enclave_ra_get_key_hash(sgx_status_t *get_keys_ret,
 	char hex_key[33] = {'\0'};
 	for (size_t i = 0; i < 16; i++)
 		snprintf(hex_key, 35, "%s%02x",hex_key, k[i]);
-	
 	if(type == SGX_RA_KEY_SK){
 		printf("session key = <%s>\n", hex_key);
+		memcpy(session_key, k, sizeof(k));
 	} else if(type == SGX_RA_KEY_MK){
 		printf("masking key = <%s>\n", hex_key);
 	}
